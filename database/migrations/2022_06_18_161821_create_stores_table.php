@@ -15,6 +15,10 @@ class CreateStoresTable extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('address');
+            $table->string('category');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
