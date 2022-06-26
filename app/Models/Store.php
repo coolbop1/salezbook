@@ -12,6 +12,10 @@ class Store extends Model
     protected $fillable = [
         'name',
         'address',
-        'category',
+        'category_id',
     ];
+
+    public function categories() {
+        return $this->belongsTo(Categories::class, 'category_id');
+    }
 }
