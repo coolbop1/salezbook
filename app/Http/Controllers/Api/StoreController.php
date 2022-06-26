@@ -14,26 +14,40 @@ class StoreController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'address' => 'required',
-            'category' => 'required'
+            'category_id' => 'required|int'
         ], $messages = [
             'required' => 'The :attribute field is required.',
         ]);
-        info("validator ".json_encode($validator ));
 
         if($validator->fails()) {
             $errors = $validator->errors();
-            return  response($errors, 400);
+            return  response()->json($errors, 400);
         }
         $validated = $validator->validated();
         
         $saved = Store::firstOrCreate([
             'name' => $validated['name'],
             'address' => $validated['address'],
-            'category' => $validated['category']
+            'category_id' => $validated['category_id']
         ]);
 
         if($saved) {
-            return  response("Store created successfully", 200);
+            $data['message'] = "Store created successfully";
+            $data['data'] = $saved;
+            return  response()->json($data, 200);
+        }
+    }
+
+    public function view(Request $request) {
+        $store = Store::with('categories')->find($request->id);
+        if($store) {
+            $data['message'] = "Store fetched successfully";
+            $data['data'] =  $store;
+            return  response()->json($data, 200);
+        } else {
+            $data['message'] = "Store not found";
+            $data['data'] =  $store;
+            return  response()->json($data, 404);
         }
     }
 }
